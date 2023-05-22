@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  cpf        String?  @unique
+  phone      String?  @unique
+  created_at DateTime @default(now())
+  Order      Order[]
+}
+
+model Product {
+  id           String   @id
+  name         String
+  description  String
+  price        Int
+  image        String
+  category     String
+  categorySlug String?
+  createdAt    DateTime @default(now())
+
+  OrderItems OrderItems[]
+  Category   Category?    @relation(fields: [categorySlug], references: [slug])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  Product   Product[]
+}
+
+model OrderItems {
+  id        String   @id @default(uuid())
+  quantity  Int
+  orderId   String
+  productId String
+  createdAt DateTime @default(now())
+  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade )
+  Order     Order[]  @relation("OrderToProduct")
+}
+
+model Order {
+  id             String   @id @default(uuid())
+  status         String
+  shippingStatus String?
+  trackingCode   String?
+  userEmail      String
+  addressId      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  User     User         @relation(fields: [userEmail], references: [email])
+  products OrderItems[] @relation("OrderToProduct")
+  Address  Address?     @relation(fields: [addressId], references: [id])
+}
+
+model Address {
+  id           String   @id @default(uuid())
+  street       String
+  neighborhood String
+  city         String
+  state        String
+  cep          String
+  createdAt    DateTime @default(now())
+  Order        Order[]
+}
+
+model Game {
+  id        String      @id @default(uuid())
+  name      String
+  image     String
+  createdAt DateTime    @default(now())
+  TeamGames TeamGames[]
+}
+
+model TeamGames {
+  id     String @id @default(uuid())
+  name   String
+  image  String
+  gameId String
+
+  Game      Game     @relation(fields: [gameId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Blog {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  image     String
+  likes     Int
+  createdAt DateTime @default(now())
+}
+
+model Coupon {
+  id         String   @id @default(uuid())
+  name       String
+  code       String   @unique
+  discount   Int
+  expirateAt DateTime
+  createdAt  DateTime @default(now())
+}
