@@ -48,7 +48,7 @@ export class CheckoutController {
       metadata: {
         items: JSON.stringify(productMetadata),
       },
-      discounts: [{ coupon }],
+      // discounts: [{ coupon }],
       customer_email: email,
       mode: 'payment',
       success_url: `https://spyderteam.com.br/success/{CHECKOUT_SESSION_ID}`,
