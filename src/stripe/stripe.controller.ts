@@ -20,7 +20,7 @@ export class CheckoutController {
 
     if (!email) return res.redirect(303, 'https://spyderteam.com.br/login');
 
-    const itsCoupon = await this.stripe.coupons.retrieve(coupon);
+    // const itsCoupon = await this.stripe.coupons.retrieve(coupon);
 
     const cart = JSON.parse(cartItems);
     console.log(cart);
